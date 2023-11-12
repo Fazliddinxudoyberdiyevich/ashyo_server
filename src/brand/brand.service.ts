@@ -17,10 +17,14 @@ export class BrandService {
   }
 
   async findOne(id: number): Promise<Brand | null> {
-    return this.prisma.brand.findUnique({
-      where: { id },
-      include: { categories: true },
-    });
+    try {
+      return this.prisma.brand.findUnique({
+        where: { id },
+        include: { categories: true },
+      });
+    } catch (error) {
+      return error;
+    }
   }
 
   async update(id: number, data: UpdateBrandDto): Promise<Brand> {
@@ -36,8 +40,12 @@ export class BrandService {
   }
 
   async remove(id: number): Promise<Brand> {
-    return this.prisma.brand.delete({
-      where: { id },
-    });
+    try {
+      return this.prisma.brand.delete({
+        where: { id },
+      });
+    } catch (error) {
+      return error;
+    }
   }
 }

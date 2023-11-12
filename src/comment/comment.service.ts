@@ -13,14 +13,17 @@ export class CommentService {
   }
 
   async findAll(): Promise<Comment[]> {
-    return this.prisma.comment.findMany({ include: { user: true } });
+    return this.prisma.comment.findMany({});
   }
 
   async findOne(id: number): Promise<Comment | null> {
-    return this.prisma.comment.findUnique({
-      where: { id },
-      include: { user: true },
-    });
+    try {
+      return this.prisma.comment.findUnique({
+        where: { id },
+      });
+    } catch (error) {
+      return error;
+    }
   }
 
   async update(id: number, data: UpdateCommentDto): Promise<Comment> {
@@ -36,8 +39,12 @@ export class CommentService {
   }
 
   async remove(id: number): Promise<Comment> {
-    return this.prisma.comment.delete({
-      where: { id },
-    });
+    try {
+      return this.prisma.comment.delete({
+        where: { id },
+      });
+    } catch (error) {
+      return error;
+    }
   }
 }

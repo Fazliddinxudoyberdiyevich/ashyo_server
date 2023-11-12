@@ -13,14 +13,17 @@ export class User_addressService {
   }
 
   async findAll(): Promise<User_address[]> {
-    return this.prisma.user_address.findMany({ include: { user: true } });
+    return this.prisma.user_address.findMany({});
   }
 
   async findOne(id: number): Promise<User_address | null> {
-    return this.prisma.user_address.findUnique({
-      where: { id },
-      include: { user: true },
-    });
+    try {
+      return this.prisma.user_address.findUnique({
+        where: { id },
+      });
+    } catch (error) {
+      return error;
+    }
   }
 
   async update(id: number, data: UpdateUser_addressDto): Promise<User_address> {
@@ -36,8 +39,12 @@ export class User_addressService {
   }
 
   async remove(id: number): Promise<User_address> {
-    return this.prisma.user_address.delete({
-      where: { id },
-    });
+    try {
+      return this.prisma.user_address.delete({
+        where: { id },
+      });
+    } catch (error) {
+      return error;
+    }
   }
 }
