@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id              Int              @id @default(autoincrement())
+  name            String
+  description     String?
+  parent_id       Int?
+  position        Int?
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @updatedAt
+  parent_category Category?        @relation("category_parent", fields: [parent_id], references: [id])
+  children        Category[]       @relation("category_parent")
+  brands          Category_brand[]
+}
+
+model Brand {
+  id          Int              @id @default(autoincrement())
+  name        String
+  description String
+  position    Int
+  logo_url    String
+  created_at  DateTime         @default(now())
+  updated_at  DateTime         @updatedAt
+  categories  Category_brand[]
+}
+
+model Product_model {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  brand_id    Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model Category_brand {
+  id          Int       @id @default(autoincrement())
+  category_id Int?
+  brand_id    Int?
+  created_at  DateTime  @default(now())
+  brand       Brand?    @relation(fields: [brand_id], references: [id])
+  category    Category? @relation(fields: [category_id], references: [id])
+}
+
+model Comment {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  product_id Int
+  comment    String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  Product    Product  @relation(fields: [product_id], references: [id])
+  User       User     @relation(fields: [user_id], references: [id])
+}
+
+model User_address {
+  id         Int     @id @default(autoincrement())
+  user_id    Int
+  address_id Int
+
+  Address    Address @relation(fields: [address_id], references: [id])
+  User       User    @relation(fields: [user_id], references: [id])
+}
+
+model Order{
+  id         Int     @id @default(autoincrement())
+  user_id    Int
+  address_id Int
+  full_name   String
+  phone_number String
+  status      String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  User       User    @relation(fields: [user_id], references: [id])
+  Address    Address @relation(fields: [address_id], references: [id])
+  Order_items Order_items[]
+}
+
+model Order_items{
+  id         Int     @id @default(autoincrement())
+  order_id    Int
+  product_id  Int
+  quantity    Int
+  subtotal    Int
+  created_at  DateTime @default(now())
+
+  Order Order @relation(fields: [order_id], references: [id])
+  Product Product @relation(fields: [product_id], references: [id])
+}
+model Address {
+  id           Int            @id @default(autoincrement())
+  User_address User_address[]
+  Order Order[]
+}
+
+model Product {
+  id      Int       @id @default(autoincrement())
+  Comment Comment[]
+  Order_items Order_items[]
+}
+
+model User {
+  id           Int            @id @default(autoincrement())
+  Comment      Comment[]
+  User_address User_address[]
+  Order Order[]
+}
