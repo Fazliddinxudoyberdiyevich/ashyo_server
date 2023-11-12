@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateBrandDto } from './dto/create-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
@@ -24,11 +24,15 @@ export class BrandService {
   }
 
   async update(id: number, data: UpdateBrandDto): Promise<Brand> {
-    return this.prisma.brand.update({
-      where: { id },
-      data,
-    });
-    // this.prisma.category_brand
+    try {
+      const brand = await this.prisma.brand.update({
+        where: { id },
+        data,
+      });
+      return brand;
+    } catch (error) {
+      return error;
+    }
   }
 
   async remove(id: number): Promise<Brand> {
